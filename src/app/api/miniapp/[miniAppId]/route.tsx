@@ -11,8 +11,8 @@ export const GET = async (
     await connect();
 
     // Check if appDataId is provided in the route
-    if (params.miniAppId) {
-      const miniApp = await MiniApp.findById(params.miniAppId);
+    if (params?.miniAppId) {
+      const miniApp = await MiniApp.findById(params?.miniAppId);
       if (!miniApp) {
         return new NextResponse("Mini App not found", { status: 404 });
       }

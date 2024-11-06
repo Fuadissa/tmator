@@ -11,8 +11,8 @@ export const GET = async (
     await connect();
 
     // Check if appDataId is provided in the route
-    if (params.appDataId) {
-      const appData = await AppData.findById(params.appDataId);
+    if (params?.appDataId) {
+      const appData = await AppData.findById(params?.appDataId);
       if (!appData) {
         return new NextResponse("App Data not found", { status: 404 });
       }
