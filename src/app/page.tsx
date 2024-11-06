@@ -29,6 +29,8 @@ export default function Home() {
       console.log("initDataUnsafe:", data); // Log all data to console
       setInitData(data); // Store all initDataUnsafe data
       setUserData(data.user as UserData); // Optionally extract user data if present
+
+      console.log(userData);
     } catch (error) {
       setError(`Failed to retrieve init data: ${error}`);
     }
