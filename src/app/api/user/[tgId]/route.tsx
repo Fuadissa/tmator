@@ -1,21 +1,20 @@
 import connect from "@/lib/db";
 import User from "@/lib/modal/userSchema";
+import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
-export const GET = async (
-  request: Request,
-  { params }: { params: { tgId: string } }
-) => {
+export const GET = async (req: NextApiRequest) => {
   try {
+    const { tgId } = req.query;
     await connect();
 
     // Check if appDataId is provided in the route
-    if (params.tgId) {
-      const tgId = await User.findById({ tg_id: params.tgId });
+    if (tgId) {
+      const tgIdUser = await User.findById({ tg_id: tgId });
       if (!tgId) {
         return new NextResponse("User Tg Id not found", { status: 404 });
       }
-      return new NextResponse(JSON.stringify(tgId), { status: 200 });
+      return new NextResponse(JSON.stringify(tgIdUser), { status: 200 });
     } else {
       return new NextResponse("User Tg Id is required", { status: 400 });
     }

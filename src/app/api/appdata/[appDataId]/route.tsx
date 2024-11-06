@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import connect from "@/lib/db";
 import AppData from "@/lib/modal/appDataSchema";
+import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
-export const GET = async (
-  request: Request,
-  { params }: { params: { appDataId: string } }
-) => {
+export const GET = async (req: NextApiRequest) => {
   try {
+    const { appDataId } = req.query;
     await connect();
 
     // Check if appDataId is provided in the route
-    if (params?.appDataId) {
-      const appData = await AppData.findById(params?.appDataId);
+    if (appDataId) {
+      const appData = await AppData.findById(appDataId);
       if (!appData) {
         return new NextResponse("App Data not found", { status: 404 });
       }

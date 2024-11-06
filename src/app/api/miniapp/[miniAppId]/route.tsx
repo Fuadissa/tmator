@@ -1,18 +1,17 @@
 import connect from "@/lib/db";
 import MiniApp from "@/lib/modal/miniAppSchema";
+import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
 // Get a single mini app based on mini app _idexport const GET = async (
-export const GET = async (
-  request: Request,
-  { params }: { params: { miniAppId: string } }
-) => {
+export const GET = async (req: NextApiRequest) => {
   try {
+    const { miniAppId } = req.query;
     await connect();
 
     // Check if appDataId is provided in the route
-    if (params?.miniAppId) {
-      const miniApp = await MiniApp.findById(params?.miniAppId);
+    if (miniAppId) {
+      const miniApp = await MiniApp.findById(miniAppId);
       if (!miniApp) {
         return new NextResponse("Mini App not found", { status: 404 });
       }
