@@ -4,7 +4,7 @@ import AppData from "@/lib/modal/appDataSchema";
 import { NextResponse } from "next/server";
 
 // Get all AppData entries based on userId
-export const GET_ALL_BY_USER = async (request: Request) => {
+export const GET = async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId");
@@ -17,31 +17,6 @@ export const GET_ALL_BY_USER = async (request: Request) => {
     const appDataEntries = await AppData.find({ userId });
 
     return new NextResponse(JSON.stringify(appDataEntries), { status: 200 });
-  } catch (error: any) {
-    return new NextResponse("Error fetching App Data: " + error.message, {
-      status: 500,
-    });
-  }
-};
-
-// Get a single AppData entry based on _id
-export const GET_ONE_BY_ID = async (request: Request) => {
-  try {
-    const { searchParams } = new URL(request.url);
-    const appDataId = searchParams.get("appDataId");
-
-    if (!appDataId) {
-      return new NextResponse("App Data ID is required", { status: 400 });
-    }
-
-    await connect();
-    const appData = await AppData.findById(appDataId);
-
-    if (!appData) {
-      return new NextResponse("App Data not found", { status: 404 });
-    }
-
-    return new NextResponse(JSON.stringify(appData), { status: 200 });
   } catch (error: any) {
     return new NextResponse("Error fetching App Data: " + error.message, {
       status: 500,
@@ -125,4 +100,3 @@ export const DELETE = async (request: Request) => {
     });
   }
 };
-
