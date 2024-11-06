@@ -1,101 +1,80 @@
-import Image from "next/image";
+"use client";
+
+import BannerSwipper from "@/components/BannerSwiper/page";
+import Navbar from "@/components/Navbar/page";
+import TemplatesGrid from "@/components/TemplatesGrid/page";
+
+import { useEffect, useState } from "react";
+import WebApp from "@twa-dev/sdk";
+
+// Define the interface for user data
+interface UserData {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  language_code: string;
+  is_premium?: boolean;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [userData, setUserData] = useState<UserData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [initData, setInitData] = useState<any>(null); // State for all initDataUnsafe data
+  const [error, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  useEffect(() => {
+    try {
+      const data = WebApp.initDataUnsafe;
+      console.log("initDataUnsafe:", data); // Log all data to console
+      setInitData(data); // Store all initDataUnsafe data
+      setUserData(data.user as UserData); // Optionally extract user data if present
+    } catch (error) {
+      setError(`Failed to retrieve init data: ${error}`);
+    }
+  }, []);
+
+  if (error) {
+    return (
+      <main className="p-4">
+        <div className="text-red-500">{error}</div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    );
+  }
+
+  if (initData) {
+    return (
+      <main className="p-4">
+        <h1 className="text-xl font-bold">Telegram Init Data</h1>
+        <pre className="bg-gray-100 p-4 rounded mt-2">
+          {JSON.stringify(initData, null, 2)}
+        </pre>
+      </main>
+    );
+  }
+
+  return (
+    <div className="flex flex-col justify-start items-center m-3 gap-3">
+      <div className="pt-4 w-full flex justify-center items-center">
+        <div className="flex justify-center items-center w-full rounded-lg h-[3rem] text-2xl text-[rgb(254,226,178)]">
+          Tmator..
+        </div>
+      </div>
+      <div className="relative w-full h-[15rem] rounded-2xl bg-[rgb(72,72,72)] overflow-hidden p-[0.45rem]">
+        {/* Shimmer effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+
+        {/* Swiper Component */}
+        <BannerSwipper />
+      </div>
+      <div className="flex justify-end w-full">
+        <div className="relative rounded-3xl bg-[rgb(72,72,72)] text-white hover:bg-[#3A3A3A] p-4 pl-7 pr-7 overflow-hidden">
+          Templates
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer rounded-3xl"></div>
+        </div>
+      </div>
+      <TemplatesGrid />
+      <Navbar />
     </div>
   );
 }
