@@ -4,7 +4,7 @@ import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
 // Get a single mini app based on mini app _idexport const GET = async (
-export const GET = async (req: NextApiRequest) => {
+export async function GET(req: NextApiRequest) {
   try {
     const { miniAppId } = req.query;
     await connect();
@@ -25,4 +25,4 @@ export const GET = async (req: NextApiRequest) => {
       status: 500,
     });
   }
-};
+}
