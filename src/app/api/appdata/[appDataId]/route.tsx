@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import connect from "@/lib/db";
 import AppData from "@/lib/modal/appDataSchema";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { appDataId } = req.query;
+    
+    const appDataId = req.nextUrl.pathname.split("/").pop();
     await connect();
 
     // Check if appDataId is provided in the route
