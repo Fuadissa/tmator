@@ -2,14 +2,12 @@ import connect from "@/lib/db";
 import User from "@/lib/modal/userSchema";
 import { NextResponse } from "next/server";
 
-interface Params {
-  params: {
-    tgId: string;
-  };
-}
-export async function GET(request: Request, { params }: Params) {
+export async function GET(
+  request: Request,
+  context: { params: { tgId: string } }
+) {
+  const { tgId } = context.params;
   try {
-    const { tgId } = params;
     await connect();
 
     // Check if appDataId is provided in the route
