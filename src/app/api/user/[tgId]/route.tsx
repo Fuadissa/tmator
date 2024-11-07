@@ -1,10 +1,13 @@
 import connect from "@/lib/db";
 import User from "@/lib/modal/userSchema";
 import { NextResponse } from "next/server";
-export async function GET(
-  request: Request,
-  { params }: { params: { tgId: string } }
-) {
+
+interface Params {
+  params: {
+    tgId: string;
+  };
+}
+export async function GET(request: Request, { params }: Params) {
   try {
     const { tgId } = params;
     await connect();
