@@ -9,16 +9,23 @@ import WebApp from "@twa-dev/sdk";
 
 // Define the interface for user data
 interface UserData {
-  id: number;
-  first_name: string;
+  id?: number;
+  first_name?: string;
   last_name?: string;
   username?: string;
-  language_code: string;
+  language_code?: string;
   is_premium?: boolean;
 }
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<UserData | null>({
+    id: 0,
+    first_name: "",
+    last_name: "",
+    username: "",
+    language_code: "",
+    is_premium: false,
+  });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [initData, setInitData] = useState<any>(null); // State for all initDataUnsafe data
   const [error, setError] = useState<string | null>(null);

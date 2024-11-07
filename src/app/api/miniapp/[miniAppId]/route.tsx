@@ -1,11 +1,12 @@
 import connect from "@/lib/db";
 import MiniApp from "@/lib/modal/miniAppSchema";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // Get a single mini app based on mini app _idexport const GET = async (
-export async function GET(req: NextRequest) {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const miniAppId = searchParams.get("miniAppId");
   try {
-    const miniAppId = req?.nextUrl.pathname.split("/").pop();
     await connect();
 
     // Check if appDataId is provided in the route
