@@ -1,10 +1,12 @@
 import connect from "@/lib/db";
 import User from "@/lib/modal/userSchema";
-import { NextRequest, NextResponse } from "next/server";
-
-export async function GET(req: NextRequest) {
+import { NextResponse } from "next/server";
+export async function GET(
+  request: Request,
+  { params }: { params: { tgId: string } }
+) {
   try {
-    const tgId = req.nextUrl.pathname.split("/").pop();
+    const { tgId } = params;
     await connect();
 
     // Check if appDataId is provided in the route
