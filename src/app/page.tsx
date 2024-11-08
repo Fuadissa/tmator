@@ -29,34 +29,33 @@ import { useAppContext } from "@/context";
 export default function Home() {
   // State for all initDataUnsafe data
   const { dispatch } = useAppContext();
-
+  
   useEffect(() => {
-    const createOrFetchUser = async () => {
-      try {
-        const data = WebApp.initDataUnsafe;
-
-        const response = await axios.post("/api/user", {
-          tgId: data.user?.id,
-          userData: {
-            username: data.user?.username,
-            profilePicture: data.user?.photo_url,
-            premium: data.user?.is_premium,
-            first_name: data.user?.first_name,
-            last_name: data.user?.last_name,
-            auth_date: data.auth_date,
-          },
-        });
-
-        // Dispatch the user data to the context
-        dispatch({
-          type: "SET_USER_DATA",
-          payload: response.data,
-        });
-      } catch (error) {
-        console.log(`Failed to retrieve init data: ${error}`);
-      }
-    };
     if (typeof window !== "undefined") {
+      const createOrFetchUser = async () => {
+        try {
+          const data = WebApp.initDataUnsafe;
+          const response = await axios.post("/api/user", {
+            tgId: data.user?.id,
+            userData: {
+              username: data.user?.username,
+              profilePicture: data.user?.photo_url,
+              premium: data.user?.is_premium,
+              first_name: data.user?.first_name,
+              last_name: data.user?.last_name,
+              auth_date: data.auth_date,
+            },
+          });
+
+          dispatch({
+            type: "SET_USER_DATA",
+            payload: response.data,
+          });
+        } catch (error) {
+          console.log(`Failed to retrieve init data: ${error}`);
+        }
+      };
+
       createOrFetchUser();
     }
   }, []);
