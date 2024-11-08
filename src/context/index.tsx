@@ -18,17 +18,18 @@ interface AppState {
     userId?: string;
     tg_id?: string;
     templateUrl?: string;
+    templateType?: string;
   };
   userData: {
     tg_id?: string;
     _id?: string;
     username?: string;
     profilePicture?: string;
-    userApps?: Array<string>;
     premium?: boolean;
     first_name?: string;
     last_name?: string;
     auth_date?: number;
+    createdAt?: number;
     [key: string]: unknown;
     // Include other fields returned by Telegram as needed
   };
@@ -54,6 +55,7 @@ type Action =
         userId?: string;
         tg_id?: string;
         templateUrl?: string;
+        templateType?: string;
       };
     }
   | { type: "SET_USER_DATA"; payload: Partial<AppState["userData"]> }

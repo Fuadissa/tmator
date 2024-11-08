@@ -18,20 +18,38 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
   try {
-    const body = await request.json();
-    await connect();
-    const newUser = new User(body);
-    await newUser.save();
+    const { tgId, ...userData } = await request.json();
 
-    return new NextResponse(
-      JSON.stringify({
-        message: "New User is added",
-        User: newUser,
-      }),
-      { status: 200 }
-    );
+    // Connect to the database
+    await connect();
+
+    // Check if a user with the provided tgId exists
+    const existingUser = await User.findOne({ tg_id: tgId });
+
+    if (existingUser) {
+      // If user exists, return the user data
+      return new NextResponse(
+        JSON.stringify({
+          message: "User already exists",
+          user: existingUser,
+        }),
+        { status: 200 }
+      );
+    } else {
+      // If user does not exist, create a new user
+      const newUser = new User({ tg_id: tgId, ...userData });
+      await newUser.save();
+
+      return new NextResponse(
+        JSON.stringify({
+          message: "New User is added",
+          user: newUser,
+        }),
+        { status: 201 }
+      );
+    }
   } catch (error: any) {
-    return new NextResponse("Error in creating User" + error.message, {
+    return new NextResponse("Error in processing request: " + error.message, {
       status: 500,
     });
   }

@@ -11,6 +11,23 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 const BannerSwipper = () => {
+  const banners = [
+    {
+      image: "/banner1.jpg",
+      alt: "banner1",
+      link: "/banner1.jpg",
+    },
+    {
+      image: "/banner2.png",
+      alt: "banner2",
+      link: "/banner2.png",
+    },
+    {
+      image: "/banner3.png",
+      alt: "banner3",
+      link: "/banner3.png",
+    },
+  ];
   return (
     <>
       <Swiper
@@ -31,25 +48,19 @@ const BannerSwipper = () => {
         loop={true}
         className="relative w-full h-full z-10 rounded-xl banner-swiper-container"
       >
-        {/* Slide 1 */}
-        <SwiperSlide className="flex items-center justify-center">
-          <Image
-            src="/templateg.png"
-            alt="template"
-            fill
-            className="object-cover"
-          />
-        </SwiperSlide>
-
-        {/* Slide 2 */}
-        <SwiperSlide className="flex items-center justify-center">
-          <Image
-            src="/templateg.png"
-            alt="template"
-            fill
-            className="object-cover"
-          />
-        </SwiperSlide>
+        {banners.map((data) => (
+          <SwiperSlide
+            className="flex items-center justify-center"
+            key={data.alt}
+          >
+            <Image
+              src={data.image}
+              alt={data.alt}
+              fill
+              className="object-cover"
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
       <style jsx global>{`
         .banner-swiper-container .swiper-pagination {

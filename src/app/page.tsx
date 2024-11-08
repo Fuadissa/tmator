@@ -4,60 +4,65 @@ import BannerSwipper from "@/components/BannerSwiper/page";
 import Navbar from "@/components/Navbar/page";
 import TemplatesGrid from "@/components/TemplatesGrid/page";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
+import axios from "axios";
+import { useAppContext } from "@/context";
+
+// {
+//   "user": {
+//     "id": 6749130742,
+//     "first_name": "Fuad",
+//     "last_name": "",
+//     "username": "fuad_issa",
+//     "language_code": "en",
+//     "allows_write_to_pm": true
+//   },
+//   "chat_instance": "6637563835630777169",
+//   "chat_type": "private",
+//   "auth_date": "1731014689",
+//   "hash": "fe5e45e986701308358c468303fd6482e778971a6115a0a6064875fa449ae405"
+// }
 
 // Define the interface for user data
-interface UserData {
-  id: number;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  language_code: string;
-  is_premium?: boolean;
-}
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [initData, setInitData] = useState<any>(null); // State for all initDataUnsafe data
-  const [error, setError] = useState<string | null>(null);
+  // State for all initDataUnsafe data
+  const { dispatch } = useAppContext();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    const createOrFetchUser = async () => {
       try {
         const data = WebApp.initDataUnsafe;
-        console.log("initDataUnsafe:", data);
-        setInitData(data);
-        setUserData(data.user as UserData);
-        console.log(userData);
+
+        const response = await axios.post("/api/user", {
+          tgId: data.user?.id,
+          userData: {
+            username: data.user?.username,
+            profilePicture: data.user?.photo_url,
+            premium: data.user?.is_premium,
+            first_name: data.user?.first_name,
+            last_name: data.user?.last_name,
+            auth_date: data.auth_date,
+          },
+        });
+
+        // Dispatch the user data to the context
+        dispatch({
+          type: "SET_USER_DATA",
+          payload: response.data,
+        });
       } catch (error) {
-        setError(`Failed to retrieve init data: ${error}`);
+        console.log(`Failed to retrieve init data: ${error}`);
       }
+    };
+    if (typeof window !== "undefined") {
+      createOrFetchUser();
     }
   }, []);
 
-  if (error) {
-    return (
-      <main className="p-4">
-        <div className="text-red-500">{error}</div>
-      </main>
-    );
-  }
-
-  if (initData) {
-    return (
-      <main className="p-4">
-        <h1 className="text-xl font-bold">Telegram Init Data</h1>
-        <pre className="bg-gray-100 p-4 rounded mt-2">
-          {JSON.stringify(initData, null, 2)}
-        </pre>
-      </main>
-    );
-  }
-
   return (
-    <div className="flex flex-col justify-start items-center m-3 gap-3">
+    <div className="flex flex-col justify-start items-center m-3 gap-3 pb-[5rem]">
       <div className="pt-4 w-full flex justify-center items-center">
         <div className="flex justify-center items-center w-full rounded-lg h-[3rem] text-2xl text-[rgb(254,226,178)]">
           Tmator..

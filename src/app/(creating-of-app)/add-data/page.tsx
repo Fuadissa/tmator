@@ -123,7 +123,6 @@ const AddData: React.FC = () => {
     return "/path/to/placeholder-image.png"; // Placeholder if no file is provided
   };
 
-  console.log(formData);
 
   return (
     <div className="flex flex-col justify-start items-center m-3 gap-3">
