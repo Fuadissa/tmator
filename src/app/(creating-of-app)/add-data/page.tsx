@@ -203,8 +203,22 @@ const AddData: React.FC = () => {
             <option value="" disabled selected>
               Select a category
             </option>
-            <option value="cnn">CNN</option>
-            <option value="nbc">NBC</option>
+            <option value="top-stories">Top Stories / Headlines</option>
+            <option value="world-news">World News</option>
+            <option value="national-news">National News</option>
+            <option value="politics">Politics</option>
+            <option value="business">Business</option>
+            <option value="technology">Technology</option>
+            <option value="sports">Sports</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="health">Health</option>
+            <option value="science">Science</option>
+            <option value="lifestyle">Lifestyle</option>
+            <option value="education">Education</option>
+            <option value="opinion">Opinion / Editorial</option>
+            <option value="environment">Environment</option>
+            <option value="finance">Finance</option>
+            <option value="local-news">Local News</option>
           </select>
         </div>
 
