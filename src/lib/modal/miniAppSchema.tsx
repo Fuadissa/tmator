@@ -9,7 +9,7 @@ const miniAppSchema = new Schema(
     botUrl: { type: String, required: true, unique: true },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     tg_id: { type: String, required: true },
-    templates: { type: String, required: true },
+    templateUrl: { type: String, required: true },
     templateType: { type: String, required: true },
   },
   {

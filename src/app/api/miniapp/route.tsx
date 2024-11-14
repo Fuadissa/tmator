@@ -36,6 +36,7 @@ export const POST = async (request: Request) => {
       JSON.stringify({
         message: "Your App is Created",
         MiniApp: newMiniApp,
+        status: true,
       }),
       { status: 200 }
     );
@@ -60,6 +61,7 @@ export const PATCH = async (request: Request) => {
       JSON.stringify({
         message: "Your Mini App data is updated",
         MiniApp: updatedMiniApp,
+        status: true,
       }),
       { status: 200 }
     );
@@ -94,6 +96,7 @@ export const DELETE = async (request: Request) => {
       JSON.stringify({
         message: "Mini App data is deleted",
         MiniApp: deletedMiniApp,
+        status: true,
       }),
       { status: 200 }
     );

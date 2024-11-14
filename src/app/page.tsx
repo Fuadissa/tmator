@@ -28,41 +28,44 @@ import { useAppContext } from "@/context";
 
 export default function Home() {
   // State for all initDataUnsafe data
-  const { dispatch } = useAppContext();
-  
+  const { dispatch, state } = useAppContext();
+
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const data = WebApp.initDataUnsafe;
+
       const createOrFetchUser = async () => {
         try {
-          const data = WebApp.initDataUnsafe;
-          const response = await axios.post("/api/user", {
-            tgId: data.user?.id,
-            userData: {
+          if (data?.user) {
+            const response = await axios.post("/api/user", {
+              tgId: data.user?.id,
               username: data.user?.username,
               profilePicture: data.user?.photo_url,
               premium: data.user?.is_premium,
               first_name: data.user?.first_name,
               last_name: data.user?.last_name,
               auth_date: data.auth_date,
-            },
-          });
+            });
 
-          dispatch({
-            type: "SET_USER_DATA",
-            payload: response.data,
-          });
+            dispatch({
+              type: "SET_USER_DATA",
+              payload: response.data?.user,
+            });
+          }
         } catch (error) {
           console.log(`Failed to retrieve init data: ${error}`);
         }
       };
 
-      createOrFetchUser();
+      if (state.userData.tg_id !== data.user?.id) {
+        createOrFetchUser();
+      }
     }
   }, []);
 
   return (
     <div className="flex flex-col justify-start items-center m-3 gap-3 pb-[5rem]">
-      <div className="pt-4 w-full flex justify-center items-center">
+      <div className="pt-1 w-full flex justify-center items-center">
         <div className="flex justify-center items-center w-full rounded-lg h-[3rem] text-2xl text-[rgb(254,226,178)]">
           Tmator..
         </div>

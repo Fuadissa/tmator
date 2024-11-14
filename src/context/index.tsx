@@ -31,7 +31,6 @@ interface AppState {
     auth_date?: number;
     createdAt?: number;
     [key: string]: unknown;
-    // Include other fields returned by Telegram as needed
   };
   appData: {
     mediaUrl?: string;
@@ -41,6 +40,18 @@ interface AppState {
     videoUrl?: string;
     imageUrl?: string;
   };
+  miniApps: Array<{
+    appName?: string;
+    appDomain?: string;
+    appImage?: string;
+    appDescription?: string;
+    botUrl?: string;
+    userId?: string;
+    tg_id?: string;
+    templateUrl?: string;
+    templateType?: string;
+    _id?: string;
+  }>;
 }
 
 type Action =
@@ -60,7 +71,40 @@ type Action =
     }
   | { type: "SET_USER_DATA"; payload: Partial<AppState["userData"]> }
   | { type: "NEW_APP_DATA"; payload: Partial<AppState["appData"]> }
+  | {
+      type: "SAVE_MINI_APP_DATA";
+      payload: {
+        appName?: string;
+        appDomain?: string;
+        appImage?: string;
+        appDescription?: string;
+        botUrl?: string;
+        userId?: string;
+        tg_id?: string;
+        templateUrl?: string;
+        templateType?: string;
+        _id?: string;
+      };
+    }
   | { type: "SET_PASTE_URL"; payload: string }
+  | { type: "DELETE_APP"; payload: string }
+  | {
+      type: "EDIT_MINI_APP";
+      payload: {
+        appName?: string;
+        appDomain?: string;
+        appImage?: string;
+        appDescription?: string;
+        botUrl?: string;
+        userId?: string;
+        tg_id?: string;
+        templateUrl?: string;
+        templateType?: string;
+        _id?: string;
+        createdAt?: string;
+        updatedAt?: string;
+      };
+    }
   | { type: "SEND_DATA" };
 
 const initialState: AppState = {
@@ -69,6 +113,7 @@ const initialState: AppState = {
     premium: false,
   },
   appData: {},
+  miniApps: [], // Empty array initialized correctly as an array of objects
 };
 
 function appReducer(state: AppState, action: Action): AppState {
@@ -85,8 +130,23 @@ function appReducer(state: AppState, action: Action): AppState {
       };
     case "SET_USER_DATA":
       return { ...state, userData: { ...state.userData, ...action.payload } };
-    // case "SET_PASTE_URL":
-    //   return { ...state, pasteUrl: action.payload };
+    case "SAVE_MINI_APP_DATA":
+      return {
+        ...state,
+        miniApps: [...state.miniApps, action.payload], // Push new mini app entry
+      };
+    case "DELETE_APP":
+      return {
+        ...state,
+        miniApps: state.miniApps.filter((app) => app._id !== action.payload), // Remove app with matching ID
+      };
+    case "EDIT_MINI_APP":
+      return {
+        ...state,
+        miniApps: state.miniApps.map((app) =>
+          app._id === action.payload._id ? { ...app, ...action.payload } : app
+        ), // Update existing app
+      };
     default:
       return state;
   }

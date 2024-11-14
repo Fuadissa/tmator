@@ -1,15 +1,21 @@
 "use client";
+import { useAppContext } from "@/context";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 const PasteUrl = () => {
+  const router = useRouter();
   const [hasPastedUrl, setHasPastedUrl] = useState(false);
+  const { state } = useAppContext();
   const [copyMessage, setCopyMessage] = useState("");
 
-  const domainUrl = "https://yourdomain.com/bot";
-
   const handleCopyUrl = () => {
-    navigator.clipboard.writeText(domainUrl);
-    setCopyMessage("Copied to clipboard!");
+    navigator.clipboard.writeText(
+      `tmator.vercel.app/miniapp/${state?.createappData?.appDomain}` || ""
+    );
+    setCopyMessage(
+      `tmator.vercel.app/miniapp/${state?.createappData?.appDomain}` || ""
+    );
 
     // Clear the message after 2 seconds
     setTimeout(() => {
@@ -19,6 +25,21 @@ const PasteUrl = () => {
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setHasPastedUrl(e.target.checked);
+  };
+
+  const searchParams = useSearchParams();
+  const miniAppId = searchParams.get("miniAppId");
+
+  const handleSubmit = () => {
+    if (!hasPastedUrl) {
+      return;
+    }
+
+    if (miniAppId) {
+      router.push(`/add-data?miniAppId=${miniAppId}`);
+      return;
+    }
+    router.push("/add-data");
   };
 
   return (
@@ -47,10 +68,16 @@ const PasteUrl = () => {
       {/* Domain URL Display and Copy Button */}
       <div className="w-full max-w-lg space-y-2">
         <p className="text-center text-gray-300">
+          Note: If you dont do this your app will not work
+        </p>
+        <p className="text-center text-gray-300">
           Copy and paste the following URL into your bot settings:
         </p>
         <div className="flex items-center bg-[rgb(72,72,72)] text-gray-300 rounded-lg px-4 py-2">
-          <span className="flex-1 truncate">{domainUrl}</span>
+          <span className="flex-1 truncate">
+            {`tmator.vercel.app/miniapp${state?.createappData?.appDomain}` ||
+              "tmator.vercel.app/miniapp/your-domain "}
+          </span>
           <button
             onClick={handleCopyUrl}
             className="ml-4 px-3 py-1 rounded-md bg-[rgb(254,226,178)] text-gray-800 font-semibold hover:bg-[rgb(252,203,151)] focus:outline-none"
@@ -90,9 +117,10 @@ const PasteUrl = () => {
               ? "bg-[rgb(254,226,178)] relative overflow-hidden"
               : "bg-[rgb(204,180,140)] cursor-not-allowed"
           }`}
+          onClick={handleSubmit}
           disabled={!hasPastedUrl}
         >
-          <span className="relative z-10">Create App</span>
+          <span className="relative z-10">Continue</span>
           {hasPastedUrl && (
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-25 animate-shimmer"></span>
           )}

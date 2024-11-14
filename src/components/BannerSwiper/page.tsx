@@ -58,6 +58,7 @@ const BannerSwipper = () => {
               alt={data.alt}
               fill
               className="object-cover"
+              loading="lazy"
             />
           </SwiperSlide>
         ))}

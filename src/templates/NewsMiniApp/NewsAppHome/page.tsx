@@ -7,23 +7,61 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import Image from "next/image";
+import { calculateReadingTime, formatDate, timeAgo } from "@/utils/helpers";
+import { useRouter } from "next/navigation";
+import { useAppContext } from "@/context";
 // import Header from "../components/Header";
 // import Tabs from "../components/Tabs";
 // import ArticlePreview from "../components/ArticlePreview";
+interface MiniApp {
+  appName?: string;
+  appDomain?: string;
+  appImage?: string;
+  appDescription?: string;
+  botUrl?: string;
+  userId?: string;
+  tg_id?: string;
+  templateUrl?: string;
+  templateType?: string;
+  _id?: string;
+  createrdAt?: string;
+  updateddAt?: string;
+}
 
-const NewsAppHome = () => {
+interface AppData {
+  _id?: string;
+  mediaUrl?: string;
+  content?: string;
+  title?: string;
+  category?: string;
+  videoUrl?: string;
+  imageUrl?: string;
+  userId?: string;
+  tg_id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface NewsAppHomeProps {
+  appData: AppData[];
+  miniApp: MiniApp;
+}
+
+const NewsAppHome: React.FC<NewsAppHomeProps> = ({ appData, miniApp }) => {
+  const { state } = useAppContext();
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-[rgb(246,248,250)] text-black pt-4 pb-4">
       <div className="flex flex-col gap-3 w-full pl-4 pr-4">
         <div className="flex justify-between items-center w-full mb-5">
           <div className="flex justify-start items-center flex-col font-serif">
-            Bulletin News
+            {miniApp.appName}
           </div>
-          <div className="h-12 w-12  rounded-full bg-[rgb(225,226,226)] p-1">
+          <div className="h-10 w-10  rounded-full bg-[rgb(225,226,226)] p-1">
             <div className="w-full h-full rounded-full relative">
               <Image
-                src="/1379x910.webp"
-                alt="templatetred"
+                src={state.userData.profilePicture || "/dummyprofile.webp"}
+                alt="user-profile"
                 fill
                 className="object-cover rounded-full"
               />
@@ -32,9 +70,9 @@ const NewsAppHome = () => {
         </div>
 
         <div className="mb-8">
-          <div className="text-sm text-gray-500"> Saturday, August 22nd</div>
+          <div className="text-sm text-gray-500"> {formatDate()}</div>
           <div className="text-2xl font-semibold mt-1 w-[55%]">
-            Welcome back, Habeeb
+            Welcome back, {state.userData.username}
           </div>
         </div>
       </div>
@@ -53,10 +91,14 @@ const NewsAppHome = () => {
         </div>
       </div>
 
-      <div className="h-[15rem] w-full bg-transparent pl-4">
+      <div
+        className={`h-[15rem] w-full bg-transparent pl-4 ${
+          appData.length <= 2 ? "pr-4" : ""
+        }`}
+      >
         <Swiper
-          slidesPerView={1.1}
-          spaceBetween={10}
+          slidesPerView={appData.length <= 2 ? 1 : 1.1}
+          spaceBetween={appData.length <= 2 ? 0 : 10}
           modules={[Pagination, Autoplay]}
           autoplay={{
             delay: 3000, // 3 seconds delay
@@ -72,13 +114,13 @@ const NewsAppHome = () => {
           }}
           className="news-banner-Swiper h-full rounded-tl-2xl rounded-bl-2xl"
         >
-          {[1, 2, 3].map((index) => (
+          {appData.map((data) => (
             <SwiperSlide
               className="bg-[rgb(225,226,226)] rounded-2xl"
-              key={index}
+              key={data._id}
             >
               <Image
-                src="/1379x910.webp"
+                src={data.imageUrl || ""}
                 alt="template"
                 fill
                 className="object-cover rounded-2xl"
@@ -93,10 +135,13 @@ const NewsAppHome = () => {
           <div> Just For You</div>
         </div>
         <div className="flex flex-col gap-6 items-center justify-center py-3">
-          {[1, 2, 3, 4, 5, 6].map((index) => (
+          {appData.map((data, index) => (
             <div
               className=" w-full flex justify-between items-center h-[6.5rem]"
-              key={index}
+              key={data._id}
+              onClick={() =>
+                router.push(`/miniapp/${miniApp.appDomain}/${data._id}`)
+              }
             >
               <div className="flex flex-col items-start justify-between w-[60%] h-full">
                 <div className="">
@@ -105,19 +150,18 @@ const NewsAppHome = () => {
                   </span>
                 </div>
                 <span className="text-sm font-semibold text-gray-800 line-clamp-2">
-                  Elon Musk on How to learn and adapt more Faster Elon Musk on
-                  How to learn and adapt more Faster
+                  {data.title}
                 </span>
                 <div className="text-[0.6rem] text-gray-500 flex justify-between items-center w-full">
-                  <span className="text-xs">Entertainment</span>
-                  <span>12 Mins</span>
-                  <span>12H Ago</span>
+                  <span className="text-xs">{data.category}</span>
+                  <span>{calculateReadingTime(data.content || "")}</span>
+                  <span>{timeAgo(data.createdAt || "")}</span>
                 </div>
               </div>
               <div className="w-[30%] rounded-xl h-full overflow-hidden relative">
                 <Image
-                  src="/1379x910.webp"
-                  alt="templatetred"
+                  src={data.imageUrl || ""}
+                  alt={`content ${index}`}
                   fill
                   className="object-cover"
                 />

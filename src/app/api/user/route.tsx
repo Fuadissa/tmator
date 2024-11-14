@@ -18,7 +18,15 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
   try {
-    const { tgId, ...userData } = await request.json();
+    const {
+      tgId,
+      username,
+      profilePicture,
+      premium,
+      first_name,
+      last_name,
+      auth_date,
+    } = await request.json();
 
     // Connect to the database
     await connect();
@@ -37,7 +45,15 @@ export const POST = async (request: Request) => {
       );
     } else {
       // If user does not exist, create a new user
-      const newUser = new User({ tg_id: tgId, ...userData });
+      const newUser = new User({
+        tg_id: tgId,
+        username,
+        profilePicture,
+        premium,
+        first_name,
+        last_name,
+        auth_date,
+      });
       await newUser.save();
 
       return new NextResponse(
@@ -54,6 +70,7 @@ export const POST = async (request: Request) => {
     });
   }
 };
+
 
 export const PATCH = async (request: Request) => {
   try {

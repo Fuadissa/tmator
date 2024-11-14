@@ -7,16 +7,19 @@ import { NextResponse } from "next/server";
 export const GET = async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
+    const miniAppId = searchParams.get("appId");
 
-    if (!userId) {
+    if (!miniAppId) {
       return new NextResponse("User ID is required", { status: 400 });
     }
 
     await connect();
-    const appDataEntries = await AppData.find({ userId });
+    const appDataEntries = await AppData.find({ miniAppId: miniAppId });
 
-    return new NextResponse(JSON.stringify(appDataEntries), { status: 200 });
+    return new NextResponse(
+      JSON.stringify({ appData: appDataEntries, status: true }),
+      { status: 200 }
+    );
   } catch (error: any) {
     return new NextResponse("Error fetching App Data: " + error.message, {
       status: 500,
@@ -36,6 +39,7 @@ export const POST = async (request: Request) => {
       JSON.stringify({
         message: "App Data entry created successfully",
         AppData: newAppData,
+        status: true,
       }),
       { status: 201 }
     );

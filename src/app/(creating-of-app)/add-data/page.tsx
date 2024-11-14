@@ -1,12 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import RichTextEditor from "@/components/Ui/RichTextEditor";
 import {
   uploadImageToSupabase,
   uploadVideoToSupabase,
 } from "@/utils/uploadFile";
+import axios from "axios";
+import { useAppContext } from "@/context";
 
 interface FormData {
   mediaUrl: string;
@@ -15,9 +17,19 @@ interface FormData {
   category: string;
   videoUrl: string;
   imageUrl: string;
+  userId: string;
+  tgId: string;
+  miniAppId: string;
 }
 
 const AddData: React.FC = () => {
+  const { state } = useAppContext();
+
+  const searchParams = useSearchParams();
+  const userId = state.userData._id;
+  const tgId = state.userData.tg_id;
+  const miniAppId = searchParams.get("miniAppId");
+
   const [formData, setFormData] = useState<FormData>({
     mediaUrl: "",
     content: "",
@@ -25,6 +37,9 @@ const AddData: React.FC = () => {
     category: "",
     videoUrl: "",
     imageUrl: "",
+    miniAppId: miniAppId || "",
+    tgId: tgId || "",
+    userId: userId || "",
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
@@ -37,32 +52,52 @@ const AddData: React.FC = () => {
     }));
   };
 
+  const handleValidation = () => {
+    if (formData.title.length < 3) {
+      return false;
+    }
+
+    if (formData.content.length < 3) {
+      return false;
+    }
+
+    if (formData.imageUrl === "" && formData.videoUrl === "") {
+      console.log(formData.imageUrl);
+      return false;
+    }
+
+    return true;
+  };
+
+  const [appDataCreated, setAppDataCreated] = useState("");
+
   const handleSubmit = async () => {
-    const slugify = (str: string) =>
-      str
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, "")
-        .replace(/[\s_-]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+    try {
+      if (handleValidation()) {
+        const { data } = await axios.post("/api/appdata", {
+          mediaUrl: formData.mediaUrl || "",
+          content: formData.content,
+          title: formData.title,
+          category: formData.category,
+          videoUrl: formData.videoUrl || "",
+          imageUrl: formData.imageUrl || "",
+          userId: formData.userId,
+          miniAppId: formData.miniAppId,
+          tg_id: formData.tgId,
+        });
 
-    const response = await fetch("/api/posts", {
-      method: "POST",
-      body: JSON.stringify({
-        title: formData.title,
-        content: formData.content,
-        imageUrl: formData.mediaUrl,
-        slug: slugify(formData.title),
-        category: formData.category,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+        if (data?.status) {
+          setAppDataCreated(`Your Mini App Data is Created Succesfully`);
 
-    if (response.ok) {
-      const data = await response.json();
-      router.push(`/posts/${data.slug}`);
+          // Clear the message after 2 seconds
+          setTimeout(() => {
+            setAppDataCreated("");
+            router.push("/");
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -98,7 +133,7 @@ const AddData: React.FC = () => {
 
       const imageUrl = await uploadImageToSupabase(file);
       if (imageUrl) {
-        handleFormDataChange("mediaUrl", imageUrl);
+        handleFormDataChange("imageUrl", imageUrl);
       } else {
         console.error("Failed to upload image to Supabase");
       }
@@ -122,7 +157,6 @@ const AddData: React.FC = () => {
     console.error("File is undefined.");
     return "/path/to/placeholder-image.png"; // Placeholder if no file is provided
   };
-
 
   return (
     <div className="flex flex-col justify-start items-center m-3 gap-3">
@@ -246,16 +280,27 @@ const AddData: React.FC = () => {
       </form>
 
       {/* Submit Button */}
-      <div className="w-[90%] max-w-lg pt-4">
+      <div className="w-full max-w-lg pt-4">
         <button
           type="button"
           onClick={handleSubmit}
-          className={`w-full py-2 rounded-lg text-gray-800 font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[rgb(72,72,72)] bg-[rgb(254,226,178)] relative overflow-hidden`}
+          className={`w-full py-2 rounded-lg text-gray-800 font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[rgb(72,72,72)] ${
+            handleValidation()
+              ? "bg-[rgb(254,226,178)] relative overflow-hidden"
+              : "bg-[rgb(204,180,140)] cursor-not-allowed"
+          }`}
         >
           <span className="relative z-10">Post</span>
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-25 animate-shimmer"></span>
+          {handleValidation() && (
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-25 animate-shimmer"></span>
+          )}{" "}
         </button>
       </div>
+      {appDataCreated && (
+        <div className="mt-4 text-center text-sm text-green-500">
+          {appDataCreated}
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes shimmer {

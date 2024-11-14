@@ -17,14 +17,49 @@ const TemplatesGrid = () => {
       name: "New's App",
       price: "Free",
     },
+    {
+      image: "/newsTemp.png",
+      type: "news",
+      alt: "News Image",
+      name: "New's App",
+      price: "Free",
+    },
+    {
+      image: "/newsTemp.png",
+      type: "news",
+      alt: "News Image",
+      name: "New's App",
+      price: "Free",
+    },
+    {
+      image: "/newsTemp.png",
+      type: "news",
+      alt: "News Image",
+      name: "New's App",
+      price: "Free",
+    },
+    {
+      image: "/newsTemp.png",
+      type: "news",
+      alt: "News Image",
+      name: "New's App",
+      price: "Free",
+    },
+    {
+      image: "/newsTemp.png",
+      type: "news",
+      alt: "News Image",
+      name: "New's App",
+      price: "Free",
+    },
   ];
 
-  const createMiniApp = (templateType: string) => {
+  const createMiniApp = (templateType: string, templateUrl: string) => {
     dispatch({
       type: "CREATE_APP_DATA",
       payload: {
         templateType: templateType,
-        templateUrl: "",
+        templateUrl: templateUrl,
         tg_id: state.userData.tg_id,
         userId: state.userData._id,
         appDescription: "",
@@ -43,10 +78,10 @@ const TemplatesGrid = () => {
       {templates.map((item) => (
         <div
           key={item.type}
-          className="flex flex-col justify-between items-center  w-full h-[15rem]  rounded-xl"
-          onClick={() => createMiniApp(item.type)}
+          className="flex flex-col justify-between items-center  w-full h-[17rem]  rounded-xl"
+          onClick={() => createMiniApp(item.type, item.image)}
         >
-          <div className="relative w-full h-[79%] bg-[rgb(72,72,72)] rounded-xl overflow-hidden p-[0.45rem]">
+          <div className="relative w-full h-[79%] bg-[#484848] rounded-xl overflow-hidden p-[0.45rem]">
             <div className="relative w-full h-full rounded-lg overflow-hidden">
               <Image
                 src={item.image}
@@ -58,7 +93,7 @@ const TemplatesGrid = () => {
             </div>
           </div>
 
-          <div className="relative w-full h-[18%] bg-[rgb(254,226,178)] rounded-lg overflow-hidden flex justify-center items-center text-lg text-graydark gap-4">
+          <div className="relative w-full h-[18%] bg-[#fee2b2] rounded-lg overflow-hidden flex justify-center items-center text-lg text-graydark gap-4">
             <span className="text-lg">{item.name}</span>
 
             <span className="text-base">Free</span>
