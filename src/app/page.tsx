@@ -34,8 +34,6 @@ export default function Home() {
     if (typeof window !== "undefined") {
       const data = WebApp.initDataUnsafe;
 
-      alert(data.user?.id);
-
       const createOrFetchUser = async () => {
         try {
           if (data?.user) {
@@ -60,6 +58,8 @@ export default function Home() {
       };
 
       if (state.userData.tg_id !== data.user?.id) {
+        alert(data.user?.id);
+
         createOrFetchUser();
       }
     }
