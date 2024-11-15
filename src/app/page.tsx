@@ -36,11 +36,7 @@ export default function Home() {
 
       const createOrFetchUser = async () => {
         try {
-          alert(data.user?.id);
-
           if (data?.user) {
-            alert(data.user?.id);
-
             const response = await axios.post("/api/user", {
               tgId: data.user?.id,
               username: data.user?.username,
@@ -50,6 +46,8 @@ export default function Home() {
               last_name: data.user?.last_name,
               auth_date: data.auth_date,
             });
+
+            alert(response);
 
             dispatch({
               type: "SET_USER_DATA",
