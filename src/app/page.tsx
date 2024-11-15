@@ -36,7 +36,11 @@ export default function Home() {
 
       const createOrFetchUser = async () => {
         try {
+          alert(data.user?.id);
+
           if (data?.user) {
+            alert(data.user?.id);
+
             const response = await axios.post("/api/user", {
               tgId: data.user?.id,
               username: data.user?.username,
@@ -58,8 +62,6 @@ export default function Home() {
       };
 
       if (state.userData.tg_id !== data.user?.id) {
-        alert(data.user?.id);
-
         createOrFetchUser();
       }
     }
