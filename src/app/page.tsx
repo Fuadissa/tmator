@@ -34,6 +34,8 @@ export default function Home() {
     if (typeof window !== "undefined") {
       const data = WebApp.initDataUnsafe;
 
+      alert(data.user?.id);
+
       const createOrFetchUser = async () => {
         try {
           if (data?.user) {
