@@ -47,8 +47,6 @@ export default function Home() {
               auth_date: data.auth_date,
             });
 
-            alert(response.data);
-
             dispatch({
               type: "SET_USER_DATA",
               payload: response.data?.user,
