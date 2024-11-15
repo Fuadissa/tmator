@@ -4,7 +4,7 @@ import BannerSwipper from "@/components/BannerSwiper/page";
 import Navbar from "@/components/Navbar/page";
 import TemplatesGrid from "@/components/TemplatesGrid/page";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import WebApp from "@twa-dev/sdk";
 import axios from "axios";
 import { useAppContext } from "@/context";
@@ -30,6 +30,8 @@ export default function Home() {
   // State for all initDataUnsafe data
   const { dispatch, state } = useAppContext();
 
+  const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const data = WebApp.initDataUnsafe;
@@ -47,7 +49,11 @@ export default function Home() {
               auth_date: data.auth_date,
             });
 
-            alert(response);
+            const originalConsoleLog = console.log(response);
+
+            // Override console.log to capture messages
+
+            setConsoleLogs((logs) => [...logs, JSON.stringify(originalConsoleLog)]);
 
             dispatch({
               type: "SET_USER_DATA",
@@ -64,6 +70,24 @@ export default function Home() {
       }
     }
   }, []);
+
+  if (consoleLogs) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          background: "white",
+          zIndex: 1000,
+        }}
+      >
+        {consoleLogs.map((log, index) => (
+          <p key={index}>{JSON.stringify(log)}</p>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col justify-start items-center m-3 gap-3 pb-[5rem]">
